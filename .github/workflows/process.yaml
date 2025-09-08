@@ -51,7 +51,7 @@ jobs:
         run: pip3 install -r requirements.txt
 
       - name: Process
-        run: python -u subscribe/process.py --overwrite
+        run: python -u subscribe/process.py --overwrite -s ${{ secrets.SUBSCRIBE_CONF }}
 
       - name: Timestamp
         run: date
