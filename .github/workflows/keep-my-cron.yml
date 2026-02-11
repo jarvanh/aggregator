@@ -1,0 +1,40 @@
+name: Keep My Cron Schedule
+
+# 触发条件：当 main 分支的 collect.yaml 文件发生变化时触发
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/collect.yaml'
+
+jobs:
+  fix-cron:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 赋予写入权限，以便提交修改
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Custom Cron
+        run: |
+          # 使用 sed 命令强制将 cron 行替换为你想要的 "10 * * * *"
+          # 注意：这里假设原文件中 cron 的格式是标准的，sed 会匹配整行进行替换
+          sed -i 's/- cron: .*/- cron: "10 * * * *"/' .github/workflows/collect.yaml
+          
+          # 检查文件是否被修改（如果已经是 10 * * * * 则不提交）
+          if [[ -n $(git status -s) ]]; then
+            echo "Cron schedule changed by upstream, reverting to custom time..."
+            
+            # 配置 Git 身份
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            
+            # 提交并推送修改
+            git add .github/workflows/collect.yaml
+            git commit -m "Auto-fix: Enforce custom cron schedule to '10 * * * *'"
+            git push
+          else
+            echo "Cron schedule is already correct. No changes needed."
+          fi
