@@ -84,7 +84,7 @@ def filter_proxies(proxies: list) -> dict:
     proxies.sort(key=lambda p: str(p.get("name", "")))
     unique_proxies, hosts = [], defaultdict(list)
 
-    # 与内置策略或本配置代理分组同名的节点会导致 mihomo 拒绝加载整个配置
+    # [fork-patch] 与内置策略或本配置代理分组同名的节点会导致 mihomo 拒绝加载整个配置
     reserved = {"direct", "reject", "reject-drop", "pass", "global", "compatible", "automatic", "🌐 proxy"}
 
     for item in proxies:
