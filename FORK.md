@@ -19,7 +19,7 @@ fork 相对上游的改动分两类，同步上游更新时只需关注第二类
 - Collect 命令去掉 `--skip`：推送前用 mihomo 对节点逐一测活，只推活节点
 
 ### 2. `.github/workflows/process.yaml`
-整体定制：运行时生成配置（注入 gist id）、先跑 `tools/prep_subs.py`、`-n 128` 测活并发、独立并发组 `github.repository-process`（不与 Collect 互相取消）、每天 4 次（UTC 3/9/15/21 点 05 分）
+整体定制：运行时生成配置（注入 gist id）、先跑 `tools/prep_subs.py`、`-n 128` 测活并发、独立并发组 `github.repository-process`（不与 Collect 互相取消）、每天 4 次（北京时间 05:05 / 10:05 / 15:05 / 20:05）
 
 ### 3. `subscribe/clash.py` — `filter_proxies()` 开头
 带 `[fork-patch]` 注释：与 clash 内置策略（DIRECT/REJECT 等）或本配置分组同名的节点自动改名，否则 mihomo 拒绝加载整个配置（公共列表/Telegram 都会混进这种节点）
