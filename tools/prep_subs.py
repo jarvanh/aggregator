@@ -19,7 +19,10 @@ import urllib.parse
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SUB_DIR = os.path.join(ROOT, "subconverter")
 BIN = os.path.join(SUB_DIR, "subconverter-linux-amd")
-OUT_DIR = os.environ.get("PREP_OUT_DIR", "/tmp/subs")
+# airport.py resolves `file:///` subs by stripping 8 chars and treating the rest
+# as a path relative to the process cwd (the repo root), so the files must be
+# written to <repo>/tmp/subs for `file:///tmp/subs/x.txt` to resolve.
+OUT_DIR = os.environ.get("PREP_OUT_DIR", os.path.join(ROOT, "tmp", "subs"))
 CHUNK = 1000
 MIN_SLIVER = 30
 
