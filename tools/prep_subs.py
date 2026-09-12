@@ -34,6 +34,14 @@ SOURCES = {
 
 PROTOCOLS = {"vmess", "vless", "trojan", "ss", "ssr", "hysteria", "hysteria2", "hy2", "tuic", "anytls", "socks5"}
 ENCODE_USERINFO = {"trojan", "vless", "hysteria", "hysteria2", "hy2", "tuic", "anytls", "socks5"}
+# clash/mihomo builtin policies: a proxy sharing one of these names is rejected
+# at config parse time and kills the whole batch
+BUILTIN_NAMES = {"direct", "reject", "reject-drop", "pass", "global", "compatible"}
+
+
+def node_name(line: str) -> str:
+    name = line.rsplit("#", 1)[1] if "#" in line else ""
+    return urllib.parse.unquote(name).strip().lower()
 
 
 def fetch(url: str) -> str:
@@ -50,6 +58,8 @@ def sanitize(text: str) -> list[str]:
             continue
         proto, sep, rest = line.partition("://")
         if not sep or proto.lower() not in PROTOCOLS:
+            continue
+        if node_name(line) in BUILTIN_NAMES:
             continue
         proto = proto.lower()
         if proto in ENCODE_USERINFO:
