@@ -1,8 +1,8 @@
 name: Process
 on:
   schedule:
-    # 4 times a day, UTC 03:05 / 09:05 / 15:05 / 21:05 (Beijing 11:05 / 17:05 / 23:05 / 05:05)
-    - cron: "5 3,9,15,21 * * *"
+    # 4 times a day within Beijing 05:00-21:00 (UTC 21:05 / 02:05 / 07:05 / 12:05)
+    - cron: "5 2,7,12,21 * * *"
   workflow_dispatch:
 
 env:
