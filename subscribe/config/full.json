@@ -15,10 +15,41 @@
             "exclude": ""
         },
         "telegram": {
-            "enable": false,
+            "enable": true,
             "pages": 5,
             "exclude": "",
-            "users": {}
+            "users": {
+                "v2ray_vpn": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                },
+                "proxy_mtm": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                },
+                "PrivateVPNs": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                },
+                "DirectVPN": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                },
+                "VmessProtocol": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                },
+                "config_proxy": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": ["full"]
+                }
+            }
         },
         "google": {
             "enable": false,
@@ -37,7 +68,7 @@
         },
         "github": {
             "enable": true,
-            "pages": 2,
+            "pages": 5,
             "push_to": ["full"],
             "exclude": "",
             "spams": []
@@ -46,7 +77,32 @@
             "enable": false,
             "users": {}
         },
-        "repositories": [],
+        "repositories": [
+            {
+                "enable": true,
+                "username": "barry-far",
+                "repo_name": "V2ray-Config",
+                "commits": 1,
+                "exclude": "",
+                "push_to": ["full"]
+            },
+            {
+                "enable": true,
+                "username": "Epodonios",
+                "repo_name": "v2ray-configs",
+                "commits": 1,
+                "exclude": "",
+                "push_to": ["full"]
+            },
+            {
+                "enable": true,
+                "username": "mahdibland",
+                "repo_name": "V2RayAggregator",
+                "commits": 1,
+                "exclude": "",
+                "push_to": ["full"]
+            }
+        ],
         "pages": [],
         "scripts": []
     },
