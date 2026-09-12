@@ -64,6 +64,9 @@ jobs:
               echo "Error: environment 'GIST_LINK' is not valid, should be 'username/gist_id' format"
               exit 1
           fi
+          # download public node lists and repack them (chunked convert + poison-line
+          # quarantine) so subconverter can import them; see tools/prep_subs.py
+          python3 tools/prep_subs.py
           sed "s/__GIST_ID__/$GIST_ID/g" subscribe/config/full.json > /tmp/process-config.json
 
       - name: Process

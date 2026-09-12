@@ -2,7 +2,7 @@
     "domains": [
         {
             "name": "barryfar-lists",
-            "sub": ["https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt"],
+            "sub": ["file:///tmp/subs/barryfar.txt"],
             "enable": true,
             "push_to": ["full"],
             "liveness": true,
@@ -10,7 +10,7 @@
         },
         {
             "name": "epodonios-lists",
-            "sub": ["https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt"],
+            "sub": ["file:///tmp/subs/epodonios.txt"],
             "enable": true,
             "push_to": ["full"],
             "liveness": true,
@@ -18,7 +18,7 @@
         },
         {
             "name": "mahdibland-aggregator",
-            "sub": ["https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt"],
+            "sub": ["file:///tmp/subs/mahdibland.txt"],
             "enable": true,
             "push_to": ["full"],
             "liveness": true,
