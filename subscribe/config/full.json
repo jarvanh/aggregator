@@ -53,7 +53,7 @@
         },
         "telegram": {
             "enable": true,
-            "pages": 5,
+            "pages": 2,
             "exclude": "",
             "users": {
                 "v2ray_vpn": {
@@ -91,20 +91,6 @@
                         "full"
                     ]
                 },
-                "config_proxy": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "mtmvpn": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
                 "SOSkeyNET": {
                     "include": "",
                     "exclude": "",
@@ -112,21 +98,7 @@
                         "full"
                     ]
                 },
-                "vlessv2ray": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
                 "v2rayprotocol": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "v2rayfree": {
                     "include": "",
                     "exclude": "",
                     "push_to": [
