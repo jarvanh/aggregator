@@ -34,4 +34,8 @@ jobs:
               r = crawl.crawl_telegram(users={ch: {"include": "", "exclude": "", "push_to": ["full"]}}, pages=2)
               k = [x for x in r if x.startswith("singlelink")]
               print(f"{ch}: links={len(r[k[0]]['proxies']) if k else 0}")
+          all7 = ["v2ray_vpn","proxy_mtm","PrivateVPNs","DirectVPN","VmessProtocol","SOSkeyNET","v2rayprotocol"]
+          r = crawl.crawl_telegram(users={c: {"include": "", "exclude": "", "push_to": ["full"]} for c in all7}, pages=2)
+          k = [x for x in r if x.startswith("singlelink")]
+          print(f"ALL7-CONCURRENT: links={len(r[k[0]]['proxies']) if k else 0}")
           EOF
