@@ -1,0 +1,101 @@
+{
+    "domains": [],
+    "crawl": {
+        "enable": true,
+        "exclude": "",
+        "threshold": 5,
+        "singlelink": true,
+        "persist": {
+            "subs": "crawledsubs",
+            "proxies": "crawledproxies"
+        },
+        "config": {
+            "rename": "",
+            "include": "",
+            "exclude": ""
+        },
+        "telegram": {
+            "enable": false,
+            "pages": 5,
+            "exclude": "",
+            "users": {}
+        },
+        "google": {
+            "enable": false,
+            "exclude": "",
+            "limits": 100,
+            "notinurl": [],
+            "push_to": []
+        },
+        "yandex": {
+            "enable": false,
+            "exclude": "",
+            "within": 3,
+            "pages": 5,
+            "notinurl": [],
+            "push_to": []
+        },
+        "github": {
+            "enable": true,
+            "pages": 2,
+            "push_to": ["full"],
+            "exclude": "",
+            "spams": []
+        },
+        "twitter": {
+            "enable": false,
+            "users": {}
+        },
+        "repositories": [],
+        "pages": [],
+        "scripts": []
+    },
+    "groups": {
+        "full": {
+            "emoji": true,
+            "list": false,
+            "targets": {
+                "clash": "full-clash",
+                "singbox": "full-singbox",
+                "v2ray": "full-v2ray"
+            },
+            "regularize": {
+                "enable": true,
+                "locate": true,
+                "residential": false,
+                "score": true,
+                "bits": 2
+            }
+        }
+    },
+    "storage": {
+        "engine": "gist",
+        "items": {
+            "full-clash": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-clash.yaml"
+            },
+            "full-singbox": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-singbox.json"
+            },
+            "full-v2ray": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-v2ray.txt"
+            },
+            "crawledsubs": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "crawledsubs.json"
+            },
+            "crawledproxies": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "crawledproxies.yaml"
+            }
+        }
+    }
+}

@@ -9,11 +9,14 @@ env:
   # time zone
   TZ: Asia/Shanghai
 
-  # network proxy aggregate config
-  SUBSCRIBE_CONF: ${{ secrets.SUBSCRIBE_CONF }}
+  # gist link, 'username/gist_id' format, used to fill the gist id into the config
+  GIST_LINK: ${{ secrets.GIST_LINK }}
 
-  # token
-  PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+  # token used to push to gist
+  PUSH_TOKEN: ${{ secrets.GIST_PAT }}
+
+  # token used to search subscription links on github
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # network reachable
   REACHABLE: ${{ vars.REACHABLE }}
@@ -29,6 +32,10 @@ env:
 
   # include spwcial protocols, such vless hysteria2 and hysteria
   ENABLE_SPECIAL_PROTOCOLS: ${{ vars.ENABLE_SPECIAL_PROTOCOLS }}
+
+concurrency:
+  group: ${{ github.repository }}-process
+  cancel-in-progress: true
 
 jobs:
   process:
@@ -50,8 +57,17 @@ jobs:
       - name: Install
         run: pip3 install -r requirements.txt
 
+      - name: Config
+        run: |
+          GIST_ID=$(echo "$GIST_LINK" | awk -F'/' '{print $2}')
+          if [ -z "$GIST_ID" ]; then
+              echo "Error: environment 'GIST_LINK' is not valid, should be 'username/gist_id' format"
+              exit 1
+          fi
+          sed "s/__GIST_ID__/$GIST_ID/g" subscribe/config/full.json > /tmp/process-config.json
+
       - name: Process
-        run: python -u subscribe/process.py --overwrite
+        run: python -u subscribe/process.py -s /tmp/process-config.json --overwrite
 
       - name: Timestamp
         run: date
