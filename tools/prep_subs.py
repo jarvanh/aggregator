@@ -59,6 +59,8 @@ def sanitize(text: str) -> list[str]:
 
 
 def convert(lines: list[str], artifact: str) -> bool:
+    if not os.access(BIN, os.X_OK):
+        os.chmod(BIN, 0o755)
     ini = os.path.join(SUB_DIR, "generate.ini")
     if os.path.exists(ini):
         os.remove(ini)
