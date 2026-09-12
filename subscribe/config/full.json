@@ -35,18 +35,6 @@
             ],
             "liveness": true,
             "ignorede": true
-        },
-        {
-            "name": "solispirit-lists",
-            "sub": [
-                "file:///tmp/subs/solispirit.txt"
-            ],
-            "enable": true,
-            "push_to": [
-                "full"
-            ],
-            "liveness": true,
-            "ignorede": true
         }
     ],
     "crawl": {

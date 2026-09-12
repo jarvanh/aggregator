@@ -325,9 +325,12 @@ def batch_crawl(conf: dict, num_threads: int = 50, display: bool = True) -> list
         exclude = conf.get("exclude", "")
         taskconf = conf.get("config", {})
 
-        # dedup by token
-        tokens = {utils.parse_token(k): k for k in records.keys()}
-        tasks = {k: records[k] for k in tokens.values()}
+        # dedup by token, but never drop single-link aggregations: their keys are
+        # not urls and all parse to the same empty token, so they would overwrite
+        # each other here (e.g. telegram's links being replaced by github's)
+        tasks = {k: records[k] for k in records.keys() if k.startswith(SINGLE_LINK_FLAG)}
+        tokens = {utils.parse_token(k): k for k in records.keys() if not k.startswith(SINGLE_LINK_FLAG)}
+        tasks.update({k: records[k] for k in tokens.values()})
 
         time.sleep(random.randint(1, 3))
 

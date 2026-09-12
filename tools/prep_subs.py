@@ -30,7 +30,6 @@ SOURCES = {
     "barryfar": "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt",
     "epodonios": "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt",
     "mahdibland": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt",
-    "solispirit": "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/all_configs.txt",
 }
 
 PROTOCOLS = {"vmess", "vless", "trojan", "ss", "ssr", "hysteria", "hysteria2", "hy2", "tuic", "anytls", "socks5"}
