@@ -67,7 +67,7 @@ jobs:
           sed "s/__GIST_ID__/$GIST_ID/g" subscribe/config/full.json > /tmp/process-config.json
 
       - name: Process
-        run: python -u subscribe/process.py -s /tmp/process-config.json --overwrite
+        run: python -u subscribe/process.py -s /tmp/process-config.json --overwrite -n 128
 
       - name: Timestamp
         run: date
