@@ -1,0 +1,221 @@
+{
+    "domains": [
+        {
+            "name": "barryfar-lists",
+            "sub": [
+                "file:///tmp/subs/barryfar.txt"
+            ],
+            "enable": true,
+            "push_to": [
+                "full"
+            ],
+            "liveness": true,
+            "ignorede": true
+        },
+        {
+            "name": "epodonios-lists",
+            "sub": [
+                "file:///tmp/subs/epodonios.txt"
+            ],
+            "enable": true,
+            "push_to": [
+                "full"
+            ],
+            "liveness": true,
+            "ignorede": true
+        },
+        {
+            "name": "mahdibland-aggregator",
+            "sub": [
+                "file:///tmp/subs/mahdibland.txt"
+            ],
+            "enable": true,
+            "push_to": [
+                "full"
+            ],
+            "liveness": true,
+            "ignorede": true
+        }
+    ],
+    "crawl": {
+        "enable": true,
+        "exclude": "",
+        "threshold": 5,
+        "singlelink": true,
+        "persist": {
+            "subs": "crawledsubs",
+            "proxies": "crawledproxies"
+        },
+        "config": {
+            "rename": "",
+            "include": "",
+            "exclude": ""
+        },
+        "telegram": {
+            "enable": true,
+            "pages": 2,
+            "exclude": "",
+            "users": {
+                "v2ray_vpn": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "proxy_mtm": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "PrivateVPNs": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "DirectVPN": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "VmessProtocol": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "SOSkeyNET": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "v2rayprotocol": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                }
+            }
+        },
+        "google": {
+            "enable": false,
+            "exclude": "",
+            "limits": 100,
+            "notinurl": [],
+            "push_to": []
+        },
+        "yandex": {
+            "enable": false,
+            "exclude": "",
+            "within": 3,
+            "pages": 5,
+            "notinurl": [],
+            "push_to": []
+        },
+        "github": {
+            "enable": true,
+            "pages": 5,
+            "push_to": [
+                "full"
+            ],
+            "exclude": "",
+            "spams": []
+        },
+        "twitter": {
+            "enable": false,
+            "users": {}
+        },
+        "repositories": [
+            {
+                "enable": true,
+                "username": "barry-far",
+                "repo_name": "V2ray-Config",
+                "commits": 1,
+                "exclude": "",
+                "push_to": [
+                    "full"
+                ]
+            },
+            {
+                "enable": true,
+                "username": "Epodonios",
+                "repo_name": "v2ray-configs",
+                "commits": 1,
+                "exclude": "",
+                "push_to": [
+                    "full"
+                ]
+            },
+            {
+                "enable": true,
+                "username": "mahdibland",
+                "repo_name": "V2RayAggregator",
+                "commits": 1,
+                "exclude": "",
+                "push_to": [
+                    "full"
+                ]
+            }
+        ],
+        "pages": [],
+        "scripts": []
+    },
+    "groups": {
+        "full": {
+            "emoji": true,
+            "list": false,
+            "targets": {
+                "clash": "full-clash",
+                "singbox": "full-singbox",
+                "v2ray": "full-v2ray"
+            },
+            "regularize": {
+                "enable": true,
+                "locate": true,
+                "residential": false,
+                "score": true,
+                "bits": 2
+            }
+        }
+    },
+    "storage": {
+        "engine": "gist",
+        "items": {
+            "full-clash": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-clash.yaml"
+            },
+            "full-singbox": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-singbox.json"
+            },
+            "full-v2ray": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "full-v2ray.txt"
+            },
+            "crawledsubs": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "crawledsubs.json"
+            },
+            "crawledproxies": {
+                "username": "jarvanh",
+                "gistid": "__GIST_ID__",
+                "filename": "crawledproxies.yaml"
+            }
+        }
+    }
+}
