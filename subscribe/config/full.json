@@ -2,25 +2,37 @@
     "domains": [
         {
             "name": "barryfar-lists",
-            "sub": ["file:///tmp/subs/barryfar.txt"],
+            "sub": [
+                "file:///tmp/subs/barryfar.txt"
+            ],
             "enable": true,
-            "push_to": ["full"],
+            "push_to": [
+                "full"
+            ],
             "liveness": true,
             "ignorede": true
         },
         {
             "name": "epodonios-lists",
-            "sub": ["file:///tmp/subs/epodonios.txt"],
+            "sub": [
+                "file:///tmp/subs/epodonios.txt"
+            ],
             "enable": true,
-            "push_to": ["full"],
+            "push_to": [
+                "full"
+            ],
             "liveness": true,
             "ignorede": true
         },
         {
             "name": "mahdibland-aggregator",
-            "sub": ["file:///tmp/subs/mahdibland.txt"],
+            "sub": [
+                "file:///tmp/subs/mahdibland.txt"
+            ],
             "enable": true,
-            "push_to": ["full"],
+            "push_to": [
+                "full"
+            ],
             "liveness": true,
             "ignorede": true
         }
@@ -47,32 +59,79 @@
                 "v2ray_vpn": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
                 },
                 "proxy_mtm": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
                 },
                 "PrivateVPNs": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
                 },
                 "DirectVPN": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
                 },
                 "VmessProtocol": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
                 },
                 "config_proxy": {
                     "include": "",
                     "exclude": "",
-                    "push_to": ["full"]
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "mtmvpn": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "SOSkeyNET": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "vlessv2ray": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "v2rayprotocol": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
+                },
+                "v2rayfree": {
+                    "include": "",
+                    "exclude": "",
+                    "push_to": [
+                        "full"
+                    ]
                 }
             }
         },
@@ -94,7 +153,9 @@
         "github": {
             "enable": true,
             "pages": 5,
-            "push_to": ["full"],
+            "push_to": [
+                "full"
+            ],
             "exclude": "",
             "spams": []
         },
@@ -109,7 +170,9 @@
                 "repo_name": "V2ray-Config",
                 "commits": 1,
                 "exclude": "",
-                "push_to": ["full"]
+                "push_to": [
+                    "full"
+                ]
             },
             {
                 "enable": true,
@@ -117,7 +180,9 @@
                 "repo_name": "v2ray-configs",
                 "commits": 1,
                 "exclude": "",
-                "push_to": ["full"]
+                "push_to": [
+                    "full"
+                ]
             },
             {
                 "enable": true,
@@ -125,7 +190,9 @@
                 "repo_name": "V2RayAggregator",
                 "commits": 1,
                 "exclude": "",
-                "push_to": ["full"]
+                "push_to": [
+                    "full"
+                ]
             }
         ],
         "pages": [],
