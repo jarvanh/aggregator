@@ -1,0 +1,99 @@
+name: Pull Upstream
+
+# pull[bot] (https://github.com/wei/pull) only auto-merges a synced PR when the
+# merge is trivial. This fork carries its own commits, so every sync PR lands
+# with the `merge-conflict` label and is never merged.
+#
+# This workflow does the job itself: it merges wzdnzd/aggregator:main into this
+# fork's main, replays the fork-only patches through tools/resolve_conflicts.py
+# and pushes the result. It never rewrites history, so main stays a fast-forward
+# and every fork commit is preserved.
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.repository }}-pull-upstream
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  TZ: Asia/Shanghai
+  UPSTREAM: wzdnzd/aggregator
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Prepare
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream "https://github.com/${UPSTREAM}.git"
+          git fetch --no-tags origin main
+          git fetch --no-tags upstream main
+
+      - name: Merge
+        id: merge
+        run: |
+          if git merge-base --is-ancestor upstream/main HEAD; then
+              echo "already up to date with ${UPSTREAM}:main"
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+              exit 0
+          fi
+
+          echo "merging ${UPSTREAM}:main"
+          git merge --no-edit --allow-unrelated-histories \
+              -m "chore: merge upstream ${UPSTREAM}:main" upstream/main || true
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve conflicts
+        if: steps.merge.outputs.changed == 'true'
+        run: python3 tools/resolve_conflicts.py .
+
+      - name: Validate
+        if: steps.merge.outputs.changed == 'true'
+        run: |
+          # every patched file must still compile / parse
+          python3 -m py_compile subscribe/clash.py subscribe/crawl.py subscribe/airport.py
+          for file in .github/workflows/*.yaml .github/workflows/*.yml; do
+              python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1], encoding='utf8'))" "$file"
+          done
+
+          # patch 1 - collect.yaml
+          grep -q '"10 \* \* \* \*"' .github/workflows/collect.yaml
+          grep -q 'collect.py --all --overwrite$' .github/workflows/collect.yaml
+          # patch 2 - process.yaml
+          grep -q 'group: \${{ github.repository }}-process' .github/workflows/process.yaml
+          grep -q 'prep_subs.py' .github/workflows/process.yaml
+          grep -q -- '-n 128' .github/workflows/process.yaml
+          grep -q '__GIST_ID__' .github/workflows/process.yaml
+          # patch 3 / 4 - python patches
+          grep -q '\[fork-patch\]' subscribe/clash.py
+          grep -q '\[fork-patch\]' subscribe/crawl.py
+          echo "all fork patches verified"
+
+      - name: Commit and push
+        if: steps.merge.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f .git/MERGE_HEAD ]; then
+              git commit --no-edit
+          fi
+
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          echo "### Synced ${UPSTREAM}:main into main" >> "$GITHUB_STEP_SUMMARY"
+          git --no-pager log --oneline -5 >> "$GITHUB_STEP_SUMMARY"

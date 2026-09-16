@@ -26,7 +26,7 @@ from logger import logger
 from origin import Origin
 
 import subconverter
-from clash import QuotedStr, quoted_scalar
+from outbound import QuotedStr, quoted_scalar
 
 # outbind type
 SUPPORT_TYPE = [
