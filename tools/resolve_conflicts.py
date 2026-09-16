@@ -83,20 +83,56 @@ def take_theirs(text):
     return take_side(text, "theirs")
 
 
+def strip_existing_guard(text):
+    """Remove any partial reserved-name guard left behind by a merge.
+
+    The guard is three pieces: the [fork-patch] comment, the `reserved = ...`
+    set and the `if` that uses it. A merge can keep any subset of them, so drop
+    all three and let resolve_clash() rebuild the block in one piece.
+    """
+    lines = text.split("\n")
+    kept = []
+    skip_reserved = False
+    for line in lines:
+        stripped = line.strip()
+        if "[fork-patch]" in stripped:
+            skip_reserved = True
+            continue
+        if skip_reserved and stripped == "":
+            skip_reserved = False
+            continue
+        if skip_reserved and stripped.startswith("reserved = {"):
+            skip_reserved = False
+            continue
+        skip_reserved = False
+        if stripped.startswith("if str(item.get(") and "reserved:" in stripped:
+            continue
+        if stripped.startswith('item["name"] = f"proxy-{str(item.get('):
+            continue
+        kept.append(line)
+    return "\n".join(kept)
+
+
 def resolve_clash(text):
     """Keep upstream's clash.py and re-apply the reserved-name guard."""
     # Upstream always wins: it owns clash.py, and every fork hunk here is either
     # fork-local code that upstream has moved into outbound/ or the reserved-name
     # guard, which is rebuilt below.
+    #
+    # A merge can leave the fork's comment (and even the `reserved = ...` line)
+    # behind while dropping the `if` that consumes it, so never trust the marker:
+    # always rebuild the whole guard from scratch.
     text = take_theirs(text)
-    if "[fork-patch]" in text:
-        return text
+    text = strip_existing_guard(text)
 
     marker = LOOP_HEAD + "\n" + LOOP_BODY_ANCHOR
     if marker not in text:
         raise SystemExit("clash.py: reserved-name guard anchor not found")
+
     guarded_loop = "\n".join([LOOP_HEAD, GUARD_BODY, LOOP_BODY_ANCHOR])
-    return text.replace(marker, GUARD_HEAD + guarded_loop, 1)
+    patched = text.replace(marker, GUARD_HEAD + guarded_loop, 1)
+    # collapse the blank line left behind when the guard was stripped out
+    return re.sub(r"\n{3,}(\s*# \[fork-patch\])", r"\n\n\1", patched)
 
 
 def resolve_collect(text):
