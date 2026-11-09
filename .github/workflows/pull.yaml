@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
@@ -67,7 +67,8 @@ jobs:
         if: steps.merge.outputs.changed == 'true'
         run: |
           # every patched file must still compile / parse
-          python3 -m py_compile subscribe/clash.py subscribe/crawl.py subscribe/airport.py
+          python3 -m py_compile subscribe/clash.py subscribe/airport.py \
+              subscribe/process.py subscribe/crawl/engine.py subscribe/crawl/extract.py
           for file in .github/workflows/*.yaml .github/workflows/*.yml; do
               python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1], encoding='utf8'))" "$file"
           done
@@ -80,9 +81,12 @@ jobs:
           grep -q 'prep_subs.py' .github/workflows/process.yaml
           grep -q -- '-n 128' .github/workflows/process.yaml
           grep -q '__GIST_ID__' .github/workflows/process.yaml
-          # patch 3 / 4 - python patches
+          # patch 3 - python patch; the old crawl.py single-link dedup patch is
+          # obsolete (upstream's crawl/ package carries single links as uris)
           grep -q '\[fork-patch\]' subscribe/clash.py
-          grep -q '\[fork-patch\]' subscribe/crawl.py
+          # the legacy module must be gone, and its replacement present
+          test ! -e subscribe/crawl.py
+          test -f subscribe/crawl/engine.py
           echo "all fork patches verified"
 
       - name: Commit and push

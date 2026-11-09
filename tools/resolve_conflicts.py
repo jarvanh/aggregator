@@ -1,4 +1,4 @@
-"""Resolve the add/add conflicts produced by merging wzdnzd/aggregator:main
+"""Resolve the conflicts produced by merging wzdnzd/aggregator:main
 into this fork, keeping upstream's implementation and re-applying the fork's
 own patches on top.
 
@@ -150,48 +150,13 @@ def resolve_collect(text):
     return text
 
 
-def resolve_crawl(text):
-    """singlelink:// aggregation keys are exempt from token dedup."""
-    text = take_theirs(text)
-    anchor = (
-        "        # dedup by token\n"
-        "        tokens = {utils.parse_token(k): k for k in records.keys()}\n"
-        "        tasks = {k: records[k] for k in tokens.values()}"
-    )
-    patch = (
-        "        # [fork-patch] # dedup by token, but never drop single-link aggregations: their keys are\n"
-        "        # not urls and all parse to the same empty token, so they would overwrite\n"
-        "        # each other here (e.g. telegram's links being replaced by github's)\n"
-        "        tasks = {k: records[k] for k in records.keys() if k.startswith(SINGLE_LINK_FLAG)}\n"
-        "        tokens = {\n"
-        "            utils.parse_token(k): k\n"
-        "            for k in records.keys()\n"
-        "            if not k.startswith(SINGLE_LINK_FLAG)\n"
-        "        }\n"
-        "        tasks.update({k: records[k] for k in tokens.values()})"
-    )
-    if "[fork-patch]" in text:
-        return text
-    if anchor not in text:
-        raise SystemExit("crawl.py: token dedup anchor not found")
-    return text.replace(anchor, patch, 1)
-
-
-def resolve_import_source(text):
-    """Helpers such as QuotedStr/quoted_scalar now live in outbound/.
-
-    clash.py re-exports them, so both sides work, but the outbound/ import is the
-    canonical one. Upstream may still be on the clash.py form, in which case the
-    fork's import is kept and no change is required at all.
-    """
-    return take_ours(text)
-
-
+# subscribe/crawl.py is deliberately absent: upstream split it into the
+# subscribe/crawl/ package (cbca81e) and carries single-link nodes as
+# NodeInput.uris, so the old token-dedup patch is obsolete. If it shows up as
+# a modify/delete conflict, main() accepts upstream's deletion.
 RESOLVERS = {
     "subscribe/clash.py": resolve_clash,
-    "subscribe/crawl.py": resolve_crawl,
     ".github/workflows/collect.yaml": resolve_collect,
-    "subscribe/scripts/v2rayse.py": resolve_import_source,
 }
 
 
@@ -203,11 +168,22 @@ def main():
         print("no conflicts to resolve")
         return
 
+    if run("git", "rev-parse", "--verify", "--quiet", "upstream/main", cwd=root, check=False).returncode != 0:
+        raise SystemExit("upstream/main not found: add the upstream remote and fetch it first")
+
     for path in conflicted:
         if path in FORK_WINS:
             run("git", "checkout", "HEAD", "--", path, cwd=root)
             run("git", "add", "--", path, cwd=root)
             print(f"{path}: kept fork version")
+            continue
+
+        # modify/delete: upstream dropped the file while the fork still has
+        # changes in it. `git checkout -m` cannot restore a path that the
+        # other side deleted, so accept upstream's deletion explicitly.
+        if run("git", "cat-file", "-e", f"upstream/main:{path}", cwd=root, check=False).returncode != 0:
+            run("git", "rm", "-f", "--", path, cwd=root)
+            print(f"{path}: removed (deleted upstream)")
             continue
 
         resolver = RESOLVERS.get(path)
