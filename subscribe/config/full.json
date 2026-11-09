@@ -13,9 +13,9 @@
             "ignorede": true
         },
         {
-            "name": "epodonios-lists",
+            "name": "matin-lists",
             "sub": [
-                "file:///tmp/subs/epodonios.txt"
+                "file:///tmp/subs/matin.txt"
             ],
             "enable": true,
             "push_to": [
@@ -148,7 +148,7 @@
             },
             {
                 "enable": true,
-                "username": "Epodonios",
+                "username": "MatinGhanbari",
                 "repo_name": "v2ray-configs",
                 "commits": 1,
                 "exclude": "",

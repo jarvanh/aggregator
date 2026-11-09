@@ -7,12 +7,18 @@ each list, sanitizes known-bad patterns, converts it in chunks, and quarantines
 any chunk that fails by recursively bisecting it, so a single poison line only
 costs its own block. Surviving lines are re-packed as a base64 link list that
 subconverter imports cleanly.
+
+Upstream lists die and get deleted all the time, so a single unavailable source
+is a warning, not a failure: the run continues with whatever is still live and
+only aborts when no source at all produced output (see main()).
 """
 
 import base64
 import os
 import subprocess
 import sys
+import time
+import urllib.error
 import urllib.request
 import urllib.parse
 
@@ -28,9 +34,14 @@ MIN_SLIVER = 30
 
 SOURCES = {
     "barryfar": "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt",
-    "epodonios": "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt",
+    # Epodonios/v2ray-configs was deleted upstream (404 since 2026-04) and its
+    # forks are stale, so the live equivalent is MatinGhanbari's list.
+    "matin": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/all_sub.txt",
     "mahdibland": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt",
 }
+
+# these codes mean the source is gone for good: retrying only wastes time
+DEAD_CODES = {404, 410, 451}
 
 PROTOCOLS = {"vmess", "vless", "trojan", "ss", "ssr", "hysteria", "hysteria2", "hy2", "tuic", "anytls", "socks5"}
 ENCODE_USERINFO = {"trojan", "vless", "hysteria", "hysteria2", "hy2", "tuic", "anytls", "socks5"}
@@ -44,15 +55,45 @@ def node_name(line: str) -> str:
     return urllib.parse.unquote(name).strip().lower()
 
 
-def fetch(url: str) -> str:
-    req = urllib.request.Request(url, headers={"User-Agent": "clash.meta; mihomo"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        return resp.read().decode("utf8", "ignore")
+def decode_list(body: bytes) -> str:
+    """Plaintext lists pass through; base64 exports get unwrapped, so a source
+    that switches format does not silently yield zero usable nodes."""
+    text = body.decode("utf8", "ignore")
+    if "://" in text:
+        return text
+    compact = "".join(text.split())
+    if len(compact) < 16:
+        return text
+    try:
+        decoded = base64.b64decode(compact + "=" * (-len(compact) % 4)).decode("utf8", "ignore")
+    except Exception:
+        return text
+    return decoded if "://" in decoded else text
+
+
+def fetch(url: str, attempts: int = 3) -> str:
+    """Download a list, retrying transient failures but giving up fast on 404."""
+    headers = {"User-Agent": "clash.meta; mihomo"}
+    last = None
+    for i in range(attempts):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return decode_list(resp.read())
+        except urllib.error.HTTPError as exc:
+            if exc.code in DEAD_CODES:
+                raise
+            last = exc
+        except OSError as exc:
+            last = exc
+        if i + 1 < attempts:
+            time.sleep(2**i)
+    raise last if last else RuntimeError("fetch failed")
 
 
 def sanitize(text: str) -> list[str]:
     lines = []
-    for raw in text.splitlines():
+    for raw in text.lstrip("\ufeff").splitlines():
         line = raw.strip()
         if not line or line.startswith(("#", "//")):
             continue
@@ -121,6 +162,8 @@ def prepare(name: str, url: str) -> tuple[int, int]:
             good.extend(chunk)
         else:
             good.extend(quarantine(chunk, tag))
+    if not good:
+        raise RuntimeError(f"no usable nodes in {total} lines")
     payload = base64.b64encode("\n".join(good).encode("utf8")).decode("ascii")
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, f"{name}.txt"), "w", encoding="ascii") as f:
@@ -129,17 +172,26 @@ def prepare(name: str, url: str) -> tuple[int, int]:
 
 
 def main() -> None:
-    summary = []
+    summary, failed, ready = [], [], 0
     for name, url in SOURCES.items():
         try:
             total, kept = prepare(name, url)
             summary.append(f"{name}: {total} lines -> {kept} kept")
+            ready += 1
         except Exception as exc:
             summary.append(f"{name}: FAILED {type(exc).__name__}: {exc}")
+            failed.append(name)
+            # a stale payload from an earlier run must never reach the pipeline
+            stale = os.path.join(OUT_DIR, f"{name}.txt")
+            if os.path.exists(stale):
+                os.remove(stale)
+
     print("\n".join(summary))
-    if all("FAILED" not in line for line in summary):
-        return
-    sys.exit(1)
+    if ready == 0:
+        print("::error::every upstream source failed, aborting instead of publishing an empty build")
+        sys.exit(1)
+    for name in failed:
+        print(f"::warning::source '{name}' is unavailable, continuing with the remaining {ready} source(s)")
 
 
 if __name__ == "__main__":
