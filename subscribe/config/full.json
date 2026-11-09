@@ -1,221 +1,222 @@
 {
-    "domains": [
-        {
-            "name": "barryfar-lists",
-            "sub": [
-                "file:///tmp/subs/barryfar.txt"
-            ],
-            "enable": true,
-            "push_to": [
-                "full"
-            ],
-            "liveness": true,
-            "ignorede": true
-        },
-        {
-            "name": "matin-lists",
-            "sub": [
-                "file:///tmp/subs/matin.txt"
-            ],
-            "enable": true,
-            "push_to": [
-                "full"
-            ],
-            "liveness": true,
-            "ignorede": true
-        },
-        {
-            "name": "mahdibland-aggregator",
-            "sub": [
-                "file:///tmp/subs/mahdibland.txt"
-            ],
-            "enable": true,
-            "push_to": [
-                "full"
-            ],
-            "liveness": true,
-            "ignorede": true
-        }
-    ],
-    "crawl": {
-        "enable": true,
-        "exclude": "",
-        "threshold": 5,
-        "singlelink": true,
-        "persist": {
-            "subs": "crawledsubs",
-            "proxies": "crawledproxies"
-        },
-        "config": {
-            "rename": "",
-            "include": "",
-            "exclude": ""
-        },
-        "telegram": {
-            "enable": true,
-            "pages": 2,
-            "exclude": "",
-            "users": {
-                "v2ray_vpn": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "proxy_mtm": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "PrivateVPNs": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "DirectVPN": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "VmessProtocol": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "SOSkeyNET": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                },
-                "v2rayprotocol": {
-                    "include": "",
-                    "exclude": "",
-                    "push_to": [
-                        "full"
-                    ]
-                }
-            }
-        },
-        "google": {
-            "enable": false,
-            "exclude": "",
-            "limits": 100,
-            "notinurl": [],
-            "push_to": []
-        },
-        "yandex": {
-            "enable": false,
-            "exclude": "",
-            "within": 3,
-            "pages": 5,
-            "notinurl": [],
-            "push_to": []
-        },
-        "github": {
-            "enable": true,
-            "pages": 5,
-            "push_to": [
-                "full"
-            ],
-            "exclude": "",
-            "spams": []
-        },
-        "twitter": {
-            "enable": false,
-            "users": {}
-        },
-        "repositories": [
-            {
-                "enable": true,
-                "username": "barry-far",
-                "repo_name": "V2ray-Config",
-                "commits": 1,
-                "exclude": "",
-                "push_to": [
-                    "full"
-                ]
-            },
-            {
-                "enable": true,
-                "username": "MatinGhanbari",
-                "repo_name": "v2ray-configs",
-                "commits": 1,
-                "exclude": "",
-                "push_to": [
-                    "full"
-                ]
-            },
-            {
-                "enable": true,
-                "username": "mahdibland",
-                "repo_name": "V2RayAggregator",
-                "commits": 1,
-                "exclude": "",
-                "push_to": [
-                    "full"
-                ]
-            }
-        ],
-        "pages": [],
-        "scripts": []
+  "sites": [
+    {
+      "name": "barryfar-lists",
+      "enable": true,
+      "subscribe": [
+        "file:///tmp/subs/barryfar.txt"
+      ],
+      "push_to": [
+        "full"
+      ],
+      "check_alive": true,
+      "ignore_default_exclude": true
     },
-    "groups": {
-        "full": {
-            "emoji": true,
-            "list": false,
-            "targets": {
-                "clash": "full-clash",
-                "singbox": "full-singbox",
-                "v2ray": "full-v2ray"
-            },
-            "regularize": {
-                "enable": true,
-                "locate": true,
-                "residential": false,
-                "score": true,
-                "bits": 2
-            }
-        }
+    {
+      "name": "matin-lists",
+      "enable": true,
+      "subscribe": [
+        "file:///tmp/subs/matin.txt"
+      ],
+      "push_to": [
+        "full"
+      ],
+      "check_alive": true,
+      "ignore_default_exclude": true
     },
-    "storage": {
-        "engine": "gist",
-        "items": {
-            "full-clash": {
-                "username": "jarvanh",
-                "gistid": "__GIST_ID__",
-                "filename": "full-clash.yaml"
-            },
-            "full-singbox": {
-                "username": "jarvanh",
-                "gistid": "__GIST_ID__",
-                "filename": "full-singbox.json"
-            },
-            "full-v2ray": {
-                "username": "jarvanh",
-                "gistid": "__GIST_ID__",
-                "filename": "full-v2ray.txt"
-            },
-            "crawledsubs": {
-                "username": "jarvanh",
-                "gistid": "__GIST_ID__",
-                "filename": "crawledsubs.json"
-            },
-            "crawledproxies": {
-                "username": "jarvanh",
-                "gistid": "__GIST_ID__",
-                "filename": "crawledproxies.yaml"
-            }
-        }
+    {
+      "name": "mahdibland-aggregator",
+      "enable": true,
+      "subscribe": [
+        "file:///tmp/subs/mahdibland.txt"
+      ],
+      "push_to": [
+        "full"
+      ],
+      "check_alive": true,
+      "ignore_default_exclude": true
     }
+  ],
+  "crawl": {
+    "enable": true,
+    "exclude": "",
+    "max_fails": 5,
+    "include_nodes": true,
+    "persist": {
+      "subscribe": "crawledsubs",
+      "nodes": "crawledproxies"
+    },
+    "task": {
+      "rename": "",
+      "include": "",
+      "exclude": ""
+    },
+    "google": {
+      "enable": false,
+      "exclude": "",
+      "push_to": [],
+      "limit": 100,
+      "exclude_sites": []
+    },
+    "yandex": {
+      "enable": false,
+      "exclude": "",
+      "pages": 5,
+      "push_to": [],
+      "days": 3,
+      "exclude_sites": []
+    },
+    "telegram": {
+      "enable": true,
+      "pages": 2,
+      "exclude": "",
+      "channels": {
+        "v2ray_vpn": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "proxy_mtm": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "PrivateVPNs": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "DirectVPN": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "VmessProtocol": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "SOSkeyNET": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        },
+        "v2rayprotocol": {
+          "include": "",
+          "exclude": "",
+          "push_to": [
+            "full"
+          ]
+        }
+      }
+    },
+    "twitter": {
+      "enable": false,
+      "users": {}
+    },
+    "github": {
+      "enable": true,
+      "pages": 5,
+      "push_to": [
+        "full"
+      ],
+      "exclude": "",
+      "exclude_repos": []
+    },
+    "repositories": [
+      {
+        "enable": true,
+        "username": "barry-far",
+        "commits": 1,
+        "exclude": "",
+        "push_to": [
+          "full"
+        ],
+        "repo": "V2ray-Config"
+      },
+      {
+        "enable": true,
+        "username": "MatinGhanbari",
+        "commits": 1,
+        "exclude": "",
+        "push_to": [
+          "full"
+        ],
+        "repo": "v2ray-configs"
+      },
+      {
+        "enable": true,
+        "username": "mahdibland",
+        "commits": 1,
+        "exclude": "",
+        "push_to": [
+          "full"
+        ],
+        "repo": "V2RayAggregator"
+      }
+    ],
+    "pages": [],
+    "scripts": []
+  },
+  "groups": {
+    "full": {
+      "emoji": true,
+      "targets": {
+        "clash": "full-clash",
+        "singbox": "full-singbox",
+        "v2ray": "full-v2ray"
+      },
+      "regularize": {
+        "enable": true,
+        "locate": true,
+        "residential": false,
+        "score": true,
+        "digits": 2,
+        "library": ""
+      },
+      "list_only": false
+    }
+  },
+  "storage": {
+    "engine": "gist",
+    "items": {
+      "full-clash": {
+        "username": "jarvanh",
+        "filename": "full-clash.yaml",
+        "gist_id": "__GIST_ID__"
+      },
+      "full-singbox": {
+        "username": "jarvanh",
+        "filename": "full-singbox.json",
+        "gist_id": "__GIST_ID__"
+      },
+      "full-v2ray": {
+        "username": "jarvanh",
+        "filename": "full-v2ray.txt",
+        "gist_id": "__GIST_ID__"
+      },
+      "crawledsubs": {
+        "username": "jarvanh",
+        "filename": "crawledsubs.json",
+        "gist_id": "__GIST_ID__"
+      },
+      "crawledproxies": {
+        "username": "jarvanh",
+        "filename": "crawledproxies.yaml",
+        "gist_id": "__GIST_ID__"
+      }
+    }
+  }
 }
