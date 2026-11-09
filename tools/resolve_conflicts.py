@@ -163,6 +163,18 @@ RESOLVERS = {
 def main():
     root = sys.argv[1] if len(sys.argv) > 1 else "."
 
+    # Files wholly maintained by the fork must never be touched by a merge,
+    # even when git auto-merges upstream's changes cleanly. Besides keeping the
+    # fork's content, this avoids a push rejected because GITHUB_TOKEN lacks
+    # the `workflows` permission when the merge would rewrite a workflow file.
+    if run("git", "rev-parse", "--verify", "--quiet", "MERGE_HEAD", cwd=root, check=False).returncode == 0:
+        for path in FORK_WINS:
+            if run("git", "cat-file", "-e", f"HEAD:{path}", cwd=root, check=False).returncode != 0:
+                continue
+            run("git", "checkout", "HEAD", "--", path, cwd=root)
+            run("git", "add", "--", path, cwd=root)
+            print(f"{path}: kept fork version")
+
     conflicted = run("git", "diff", "--name-only", "--diff-filter=U", cwd=root).stdout.split()
     if not conflicted:
         print("no conflicts to resolve")
@@ -172,12 +184,6 @@ def main():
         raise SystemExit("upstream/main not found: add the upstream remote and fetch it first")
 
     for path in conflicted:
-        if path in FORK_WINS:
-            run("git", "checkout", "HEAD", "--", path, cwd=root)
-            run("git", "add", "--", path, cwd=root)
-            print(f"{path}: kept fork version")
-            continue
-
         # modify/delete: upstream dropped the file while the fork still has
         # changes in it. `git checkout -m` cannot restore a path that the
         # other side deleted, so accept upstream's deletion explicitly.
