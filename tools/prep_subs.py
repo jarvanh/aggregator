@@ -22,6 +22,8 @@ import urllib.error
 import urllib.request
 import urllib.parse
 
+import yaml
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SUB_DIR = os.path.join(ROOT, "subconverter")
 BIN = os.path.join(SUB_DIR, "subconverter-linux-amd")
@@ -30,7 +32,9 @@ BIN = os.path.join(SUB_DIR, "subconverter-linux-amd")
 # written to <repo>/tmp/subs for `file:///tmp/subs/x.txt` to resolve.
 OUT_DIR = os.environ.get("PREP_OUT_DIR", os.path.join(ROOT, "tmp", "subs"))
 CHUNK = 1000
-MIN_SLIVER = 30
+# bisect down to single lines: one poison link should cost its own line, not a
+# 30-line block. subconverter starts fast enough that this stays cheap.
+MIN_SLIVER = 1
 
 SOURCES = {
     "barryfar": "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt",
@@ -112,6 +116,31 @@ def sanitize(text: str) -> list[str]:
     return lines
 
 
+def yaml_ok(path: str) -> bool:
+    """True when the converted clash config actually parses.
+
+    subconverter happily exits 0 while emitting unquoted IPv6 hosts
+    (`server: 2a03:90c0:382:1::38f`) or other broken flow mappings, and the
+    aggregator later loads this file with PyYAML: one bad line and the whole
+    source is dropped at import time. Mirror airport.py's loader (SafeLoader,
+    then a permissive `str` constructor) and reject what it would reject.
+    """
+    for permissive in (False, True):
+        try:
+            with open(path, "r", encoding="utf8", errors="ignore") as f:
+                if permissive:
+                    yaml.add_multi_constructor(
+                        "str",
+                        lambda loader, suffix, node: str(node.value),
+                        Loader=yaml.SafeLoader,
+                    )
+                yaml.safe_load(f)
+            return True
+        except Exception:
+            continue
+    return False
+
+
 def convert(lines: list[str], artifact: str) -> bool:
     if not os.access(BIN, os.X_OK):
         os.chmod(BIN, 0o755)
@@ -130,7 +159,12 @@ def convert(lines: list[str], artifact: str) -> bool:
         )
     proc = subprocess.run([BIN, "-g", "--artifact", artifact], cwd=ROOT, capture_output=True, timeout=300)
     out = os.path.join(SUB_DIR, f"{artifact}.yaml")
-    ok = proc.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 50
+    ok = (
+        proc.returncode == 0
+        and os.path.exists(out)
+        and os.path.getsize(out) > 50
+        and yaml_ok(out)
+    )
     if os.path.exists(out):
         os.remove(out)
     if os.path.exists(os.path.join(SUB_DIR, source)):
@@ -164,6 +198,13 @@ def prepare(name: str, url: str) -> tuple[int, int]:
             good.extend(quarantine(chunk, tag))
     if not good:
         raise RuntimeError(f"no usable nodes in {total} lines")
+    # chunks can each convert cleanly yet still clash when merged (renames,
+    # duplicates, aggregate size); the pipeline converts the merged payload as
+    # one file, so verify exactly that before publishing it.
+    if not convert(good, f"{name}-all"):
+        good = quarantine(good, f"{name}-all")
+        if not good:
+            raise RuntimeError("merged payload is still unparsable after quarantine")
     payload = base64.b64encode("\n".join(good).encode("utf8")).decode("ascii")
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, f"{name}.txt"), "w", encoding="ascii") as f:
